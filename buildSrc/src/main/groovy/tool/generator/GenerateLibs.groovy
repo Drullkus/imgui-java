@@ -87,12 +87,14 @@ class GenerateLibs extends DefaultTask {
         if (forWindows) {
             def win64 = BuildTarget.newDefaultTarget(BuildTarget.TargetOs.Windows, true)
             addFreeTypeIfEnabled(win64)
+            addDebugPrefixMap(win64, "imgui-java64.dll")
             buildTargets += win64
         }
 
         if (forLinux) {
             def linux64 = BuildTarget.newDefaultTarget(BuildTarget.TargetOs.Linux, true)
             addFreeTypeIfEnabled(linux64)
+            addDebugPrefixMap(linux64, "libimgui-java64.so")
             buildTargets += linux64
         }
 
@@ -103,6 +105,7 @@ class GenerateLibs extends DefaultTask {
             mac64.cppFlags = mac64.cppFlags.replace('10.7', minMacOsVersion)
             mac64.linkerFlags = mac64.linkerFlags.replace('10.7', minMacOsVersion)
             addFreeTypeIfEnabled(mac64)
+            addDebugPrefixMap(mac64, "libimgui-java64.dylib")
             buildTargets += mac64
         }
 
@@ -113,6 +116,7 @@ class GenerateLibs extends DefaultTask {
             macArm64.cppFlags = macArm64.cppFlags.replace('10.7', minMacOsVersion)
             macArm64.linkerFlags = macArm64.linkerFlags.replace('10.7', minMacOsVersion)
             addFreeTypeIfEnabled(macArm64)
+            addDebugPrefixMap(macArm64, "libimgui-javaarm64.dylib")
             buildTargets += macArm64
         }
 
@@ -153,6 +157,16 @@ class GenerateLibs extends DefaultTask {
         }
 
         target.libraries += ' -lfreetype'
+    }
+
+    void addDebugPrefixMap(BuildTarget target, String replacePath) {
+        def sourcePrefix = project.rootDir.absolutePath
+
+        // Add logging
+        println "Adding debug prefix map: -fdebug-prefix-map=${sourcePrefix}=/${replacePath} and -ffile-prefix-map=${sourcePrefix}=/${replacePath} to target ${target}"
+
+        // Ensure the correct flags are added to the target's cppFlags
+        target.cppFlags += " -fdebug-prefix-map=${sourcePrefix}=/${replacePath} -ffile-prefix-map=${sourcePrefix}=/${replacePath} -gno-record-gcc-switches"
     }
 
     void enableDefine(String define) {

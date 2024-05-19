@@ -10,11 +10,11 @@ java {
     }
 }
 
-def packageName = 'imgui-java-natives-linux'
-def packageDesc = 'Native binaries for imgui-java binding for Linux'
-def moduleName = 'imgui.natives.linux'
+def packageName = 'imgui-java-natives-macos-arm64'
+def packageDesc = 'Native binaries for imgui-java binding for MacOS arm64'
+def moduleName = 'imgui.natives.macos_arm64'
 def fromDir = '../bin'
-def libName = 'libimgui-java64.so'
+def libName = 'libimgui-javaarm64.dylib'
 
 switch (findProperty('deployType')) {
     case 'windows':
